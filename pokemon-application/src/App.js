@@ -111,7 +111,7 @@ function App() {
             <div className="modal-header">
               <h5 className="modal-title" id="staticBackdropLabel">
                 {" "}
-                #{detailsPage.id} {detailsPage.name}
+                 {detailsPage.name}
               </h5>
               <button
                 class="btn btn-outline-success my-2 my-sm-0"
@@ -234,7 +234,7 @@ function App() {
                         alt={pokemon.name}
                       />
                       <div className="card-body">
-                        <h5 className="card-title">#{pokemon.id}</h5>
+                        {/* <h5 className="card-title">#{pokemon.id}</h5> */}
                         <h5 className="card-title">{pokemon.name}</h5>
                         <h5 className="card-subtitle mb-2 text-muted">
                           {" "}
