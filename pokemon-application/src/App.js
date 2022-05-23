@@ -103,7 +103,7 @@ function App() {
 
   return (
     <div className="App">
-      <h2>Pokemon Application</h2>
+      <h2 data-testid = "header">Pokemon Application</h2>
       {/* Pokemon details page */}
       {detailsPage ? (
         <div className="modal-dialog">
