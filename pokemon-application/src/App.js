@@ -61,6 +61,10 @@ function App() {
     setDetailsPage(data);
   };
 
+  const backaToPage = (data) => {
+    setDetailsPage(false);
+  };
+
   useEffect(() => {
     listPokemons();
   }, [limit, offset]);
@@ -73,9 +77,10 @@ function App() {
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="staticBackdropLabel">
-                #{detailsPage.id} {detailsPage.name}
-              </h5>
+              <h5 className="modal-title" id="staticBackdropLabel">{" "} #{detailsPage.id} {detailsPage.name}</h5>
+              <button class="btn btn-outline-success my-2 my-sm-0"
+                onClick={backaToPage}>Back
+              </button>
             </div>
             <div className="modal-body">
               <img
