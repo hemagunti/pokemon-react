@@ -5,7 +5,7 @@ function App() {
   const [pokemons, setPokemons] = useState([]);
   const [limit, setlimit] = useState(10);
   const [offset, setoffset] = useState(10);
-
+  const [value, setValue] = useState();
   const [load, setLoad] = useState(0);
   const [detailsPage, setDetailsPage] = useState(false);
 
@@ -33,8 +33,29 @@ function App() {
 
 
   }
-
-  
+// search pokemon
+  const searchPokemon = async (e) => {
+    console.log("target value",e.target.value);
+    setValue(e.target.value);
+    if (e.charCode === 13) {
+      try {
+        if (e.target.value.trim() === "") {
+          listPokemons();
+        } else {
+          const res = await fetch(
+            `https://pokeapi.co/api/v2/pokemon/${e.target.value.toLowerCase()}`
+          );
+          const data = await res.json();
+          console.log("sdds", data);
+          setPokemons([data]);
+        }
+      } catch (e) {
+        console.log("err", e);
+        setPokemons([]);
+        setLoad(2);
+      }
+    }
+  };
 
   useEffect(() => {
     listPokemons();
@@ -43,6 +64,20 @@ function App() {
   return (
     <div className="App">
       <h2>Pokemon Application</h2>
+      {/* search pokemon by name */}
+      <div className="container">
+        <div className="input-group mb-3">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search"
+            aria-label="Search"
+            aria-describedby="basic-addon1"
+            onKeyPress={(e) => searchPokemon(e)}
+          />
+        </div>
+      </div>
+
       {/* Pokemon cards display */}
       <div className="container">
         <div className="row">
@@ -50,14 +85,22 @@ function App() {
             pokemons.map((pokemon, index) => (
               <div className="col-md-3" key={index}>
                 <div className="card" role="button">
-                  <img className="card-img-top"
+                  <img
+                    className="card-img-top"
                     src={pokemon.sprites.other.dream_world.front_default}
-                    alt={pokemon.name}/>
+                    alt={pokemon.name}
+                  />
                   <div className="card-body">
                     <h5 className="card-title">#{pokemon.id}</h5>
                     <h5 className="card-title">{pokemon.name}</h5>
-                    <h5 className="card-subtitle mb-2 text-muted"> Height: {pokemon.height}</h5>
-                    <h5 className="card-subtitle mb-2 text-muted"> weight: {pokemon.weight}</h5>
+                    <h5 className="card-subtitle mb-2 text-muted">
+                      {" "}
+                      Height: {pokemon.height}
+                    </h5>
+                    <h5 className="card-subtitle mb-2 text-muted">
+                      {" "}
+                      weight: {pokemon.weight}
+                    </h5>
                   </div>
                 </div>
               </div>
