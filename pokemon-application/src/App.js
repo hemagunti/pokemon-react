@@ -57,6 +57,10 @@ function App() {
     }
   };
 
+  const pokemonDetails = (data) => {
+    setDetailsPage(data);
+  };
+
   useEffect(() => {
     listPokemons();
   }, [limit, offset]);
@@ -64,56 +68,112 @@ function App() {
   return (
     <div className="App">
       <h2>Pokemon Application</h2>
-      {/* search pokemon by name */}
-      <div className="container">
-        <div className="input-group mb-3">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Search"
-            aria-label="Search"
-            aria-describedby="basic-addon1"
-            onKeyPress={(e) => searchPokemon(e)}
-          />
-        </div>
-      </div>
-
-      {/* Pokemon cards display */}
-      <div className="container">
-        <div className="row">
-          {pokemons.length > 0 ? (
-            pokemons.map((pokemon, index) => (
-              <div className="col-md-3" key={index}>
-                <div className="card" role="button">
-                  <img
-                    className="card-img-top"
-                    src={pokemon.sprites.other.dream_world.front_default}
-                    alt={pokemon.name}
-                  />
-                  <div className="card-body">
-                    <h5 className="card-title">#{pokemon.id}</h5>
-                    <h5 className="card-title">{pokemon.name}</h5>
-                    <h5 className="card-subtitle mb-2 text-muted">
-                      {" "}
-                      Height: {pokemon.height}
-                    </h5>
-                    <h5 className="card-subtitle mb-2 text-muted">
-                      {" "}
-                      weight: {pokemon.weight}
-                    </h5>
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : load === 2 ? (
-            <div className="alert alert-primary" role="alert">
-              Search result not fount
+      {/* Pokemon details page */}
+      {detailsPage ? (
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="staticBackdropLabel">
+                #{detailsPage.id} {detailsPage.name}
+              </h5>
             </div>
-          ) : (
-            <div>loading...</div>
-          )}
+            <div className="modal-body">
+              <img
+                src={detailsPage.sprites.other.dream_world.front_default}
+                className="img-fluid"
+                alt="..."
+              />
+              <ol className="list-group list-group-numbered">
+                <li className="list-group-item d-flex justify-content-between align-items-start">
+                  <div className="ms-2 me-auto text-start">
+                    <div className="fw-bold">Height</div>
+                    {detailsPage.height}
+                  </div>
+                </li>
+                <li className="list-group-item d-flex justify-content-between align-items-start">
+                  <div className="ms-2 me-auto text-start">
+                    <div className="fw-bold">Weight</div>
+                    {detailsPage.weight}
+                  </div>
+                </li>
+                <li className="list-group-item d-flex justify-content-between align-items-start">
+                  <div className="ms-2 me-auto text-start">
+                    <div className="fw-bold">Abilities</div>
+                    {detailsPage.abilities.map((val, key) => (
+                      <div key={key}>- {val.ability.name}</div>
+                    ))}
+                  </div>
+                </li>
+                <li className="list-group-item d-flex justify-content-between align-items-start">
+                  <div className="ms-2 me-auto text-start">
+                    <div className="fw-bold">Moves</div>
+                    {detailsPage.moves.map((val, key) => (
+                      <div key={key}>- {val.move.name}</div>
+                    ))}
+                  </div>
+                </li>
+              </ol>
+            </div>
+          </div>
         </div>
-      </div>
+      ) : (
+        <>
+          {/* search pokemon by name */}
+          <div className="container">
+            <div className="input-group mb-3">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search by Name"
+                aria-label="Search"
+                aria-describedby="basic-addon1"
+                onKeyPress={(e) => searchPokemon(e)}
+              />
+            </div>
+          </div>
+
+          {/* Pokemon cards display */}
+          <div className="container">
+            <div className="row">
+              {pokemons.length > 0 ? (
+                pokemons.map((pokemon, index) => (
+                  <div className="col-md-3" key={index}>
+                    <div
+                      className="card"
+                      onClick={() => pokemonDetails(pokemon)}
+                      role="button"
+                    >
+                      <img
+                        className="card-img-top"
+                        src={pokemon.sprites.other.dream_world.front_default}
+                        alt={pokemon.name}
+                      />
+                      <div className="card-body">
+                        <h5 className="card-title">#{pokemon.id}</h5>
+                        <h5 className="card-title">{pokemon.name}</h5>
+                        <h5 className="card-subtitle mb-2 text-muted">
+                          {" "}
+                          Height: {pokemon.height}
+                        </h5>
+                        <h5 className="card-subtitle mb-2 text-muted">
+                          {" "}
+                          weight: {pokemon.weight}
+                        </h5>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : load === 2 ? (
+                <div className="alert alert-primary" role="alert">
+                  Search result not fount
+                </div>
+              ) : (
+                <div>loading...</div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
