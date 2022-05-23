@@ -3,11 +3,12 @@ import "./App.css";
 
 function App() {
   const [pokemons, setPokemons] = useState([]);
-  const [limit, setlimit] = useState(10);
-  const [offset, setoffset] = useState(10);
+  const [limit, setLimit] = useState(10);
+  const [offset, setOffset] = useState(10);
   const [value, setValue] = useState();
   const [load, setLoad] = useState(0);
   const [detailsPage, setDetailsPage] = useState(false);
+  const [pagination, setpagination] = useState([1, 2, 3]);
 
   
   const listPokemons = async () => {
@@ -16,7 +17,7 @@ function App() {
     const api = `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`;
     const res = await fetch(api);
     const data = await res.json();
-    console.log("data", data);
+    //console.log("data", data);
     function getPokemons(result) {
       result.forEach(async (pokemon) => {
         // console.log("pokemon",pokemon);
@@ -24,18 +25,49 @@ function App() {
           `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`
         );
         const data = await res.json();
-        console.log("results", data);
+        //console.log("results", data);
          setPokemons((currentList) => [...currentList, data]);
         })
     }
     getPokemons(data.results);
     //console.log("pokemons",pokemons);
-
-
   }
+  const next = (num) => {
+    const setPage = num * limit - limit;
+    setOffset(setPage);
+  };
+  //Next page
+  const nextPage = (page) => {
+    const setPage = page + limit;
+    //console.log(setPage + ">" + pagination[pagination.length - 1] * limit);
+    if (setPage >= pagination[pagination.length - 1] * limit) {
+      const pageNumbers = [];
+      pagination.forEach((item, index) => {
+        pageNumbers.push(item + pagination.length);
+      });
+      setpagination(pageNumbers);
+    }
+    setOffset(setPage);
+  };
+
+  //Previous page
+  const prevPage = (page) => {
+    const setPage = page - limit;
+   // console.log(page + "<" + pagination[0] * limit);
+    if (page < pagination[0] * limit) {
+      const pageNumbers = [];
+      pagination.forEach((item, index) => {
+        pageNumbers.push(item - pagination.length);
+      });
+      setpagination(pageNumbers);
+    }
+    setOffset(setPage);
+  };
+
+
 // search pokemon
   const searchPokemon = async (e) => {
-    console.log("target value",e.target.value);
+   // console.log("target value",e.target.value);
     setValue(e.target.value);
     if (e.charCode === 13) {
       try {
@@ -46,11 +78,11 @@ function App() {
             `https://pokeapi.co/api/v2/pokemon/${e.target.value.toLowerCase()}`
           );
           const data = await res.json();
-          console.log("sdds", data);
+         // console.log("sdds", data);
           setPokemons([data]);
         }
       } catch (e) {
-        console.log("err", e);
+        //console.log("err", e);
         setPokemons([]);
         setLoad(2);
       }
@@ -77,9 +109,15 @@ function App() {
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="staticBackdropLabel">{" "} #{detailsPage.id} {detailsPage.name}</h5>
-              <button class="btn btn-outline-success my-2 my-sm-0"
-                onClick={backaToPage}>Back
+              <h5 className="modal-title" id="staticBackdropLabel">
+                {" "}
+                #{detailsPage.id} {detailsPage.name}
+              </h5>
+              <button
+                class="btn btn-outline-success my-2 my-sm-0"
+                onClick={backaToPage}
+              >
+                Back
               </button>
             </div>
             <div className="modal-body">
@@ -135,8 +173,50 @@ function App() {
                 onKeyPress={(e) => searchPokemon(e)}
               />
             </div>
-          </div>
+            </div>
+            {/*  */}
+           <div className="container d-flex justify-content-end"> 
+            <nav aria-label="Page navigation example">
+              <ul className="pagination">
+                <li
+                  className={offset === 0 ? `page-item disabled` : `page-item`}
+                >
+                  <a
+                    className="page-link"
+                    tabindex="-1"
+                    aria-disabled="true"
+                    href="#"
+                    onClick={() => prevPage(offset)}
+                  >
+                    Previous
+                  </a>
+                </li>
+                {pagination.map((val, key) => (
+                  <li
+                    className={
+                      offset == val * limit - limit
+                        ? `page-item active`
+                        : `page-item`
+                    }
+                  >
+                    <a className="page-link" href="#" onClick={() => next(val)}>
+                      {val}
+                    </a>
+                  </li>
+                ))}
 
+                <li className="page-item">
+                  <a
+                    className="page-link"
+                    href="#"
+                    onClick={() => nextPage(offset)}
+                  >
+                    Next
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
           {/* Pokemon cards display */}
           <div className="container">
             <div className="row">
@@ -176,6 +256,49 @@ function App() {
                 <div>loading...</div>
               )}
             </div>
+          </div>
+          {/* footer pagination */}
+          <div className="container">
+            <nav aria-label="Page navigation example">
+              <ul className="pagination">
+                <li
+                  className={offset === 0 ? `page-item disabled` : `page-item`}
+                >
+                  <a
+                    className="page-link"
+                    tabindex="-1"
+                    aria-disabled="true"
+                    href="#"
+                    onClick={() => prevPage(offset)}
+                  >
+                    Previous
+                  </a>
+                </li>
+                {pagination.map((val, key) => (
+                  <li
+                    className={
+                      offset == val * limit - limit
+                        ? `page-item active`
+                        : `page-item`
+                    }
+                  >
+                    <a className="page-link" href="#" onClick={() => next(val)}>
+                      {val}
+                    </a>
+                  </li>
+                ))}
+
+                <li className="page-item">
+                  <a
+                    className="page-link"
+                    href="#"
+                    onClick={() => nextPage(offset)}
+                  >
+                    Next
+                  </a>
+                </li>
+              </ul>
+            </nav>
           </div>
         </>
       )}
