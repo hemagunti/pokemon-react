@@ -13,7 +13,19 @@ function App() {
     const api = `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`;
     const res = await fetch(api);
     const data = await res.json();
-    console.log("data",data);
+    console.log("data", data);
+    
+    function getPokemons(result) {
+      result.forEach(async (pokemon) => {
+        // console.log("pokemon",pokemon);
+        const res = await fetch(
+          `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`
+        );
+        const data = await res.json();
+        console.log("pokemon results", data);
+        })
+    }
+    getPokemons(data.results);
 }
 
   useEffect(() => {
